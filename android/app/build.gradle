@@ -28,6 +28,12 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        defaultConfig {
+    applicationId "com.example.dytimetable"
+    minSdkVersion 25 // Wear OS 권장 최소 버전
+    targetSdkVersion 33
+    // ...
+}
     }
 
     buildTypes {

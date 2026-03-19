@@ -74,7 +74,7 @@ class _TodayMealScreenState extends State<TodayMealScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final shortest = constraints.biggest.shortestSide;
-        final size = shortest * 0.82; // 원형 화면 안쪽에 들어가도록 축소
+        final size = shortest * 0.9; // 원형 화면 안쪽에 들어가도록 축소
 
         return Center(
           child: SizedBox(
@@ -252,7 +252,7 @@ class _Header extends StatelessWidget {
               MaterialPageRoute(builder: (_) => const SetupScreen()),
             );
           },
-          icon: const Icon(Icons.settings, size: 16),
+          icon: const Icon(Icons.settings, size: 14),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
         ),
@@ -260,7 +260,7 @@ class _Header extends StatelessWidget {
         // 새로고침 버튼
         IconButton(
           onPressed: onRefresh,
-          icon: const Icon(Icons.refresh, size: 16),
+          icon: const Icon(Icons.refresh, size: 14),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
         ),

@@ -1,4 +1,5 @@
 // lib/features/home/home_screen.dart
+
 import 'package:flutter/material.dart';
 
 import '../meal/today_meal_screen.dart';
@@ -12,21 +13,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _pageController = PageController();
   int _currentIndex = 0; // 0: 시간표, 1: 급식
 
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  void _onDotTap(int index) {
-    _pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeOut,
-    );
+  void _setIndex(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 
   @override
@@ -34,38 +26,63 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: Stack(
+        child: Column(
           children: [
-            PageView(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() => _currentIndex = index);
-              },
-              children: const [
-                TodayTimetableScreen(),
-                TodayMealScreen(),
-              ],
-            ),
-            Positioned(
-              bottom: 6,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _PageDot(
-                      selected: _currentIndex == 0,
-                      onTap: () => _onDotTap(0),
-                    ),
-                    const SizedBox(width: 6),
-                    _PageDot(
-                      selected: _currentIndex == 1,
-                      onTap: () => _onDotTap(1),
-                    ),
-                  ],
-                ),
+            // 상단에는 아무 탭도 두지 않고, 바로 콘텐츠
+            Expanded(
+              child: IndexedStack(
+                index: _currentIndex,
+                children: const [
+                  TodayTimetableScreen(),
+                  TodayMealScreen(),
+                ],
               ),
+            ),
+
+            // 🔹 아래쪽 전환 버튼 영역
+            const SizedBox(height: 2),
+            _BottomSwitchBar(
+              currentIndex: _currentIndex,
+              onTap: _setIndex,
+            ),
+            const SizedBox(height: 4),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BottomSwitchBar extends StatelessWidget {
+  final int currentIndex;
+  final void Function(int) onTap;
+
+  const _BottomSwitchBar({
+    required this.currentIndex,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade900,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _BottomSwitchButton(
+              label: '시간표',
+              selected: currentIndex == 0,
+              onTap: () => onTap(0),
+            ),
+            _BottomSwitchButton(
+              label: '급식',
+              selected: currentIndex == 1,
+              onTap: () => onTap(1),
             ),
           ],
         ),
@@ -74,11 +91,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _PageDot extends StatelessWidget {
+class _BottomSwitchButton extends StatelessWidget {
+  final String label;
   final bool selected;
   final VoidCallback onTap;
 
-  const _PageDot({
+  const _BottomSwitchButton({
+    required this.label,
     required this.selected,
     required this.onTap,
   });
@@ -89,11 +108,18 @@ class _PageDot extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        width: selected ? 10 : 6,
-        height: selected ? 10 : 6,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
-          color: selected ? Colors.blueAccent : Colors.grey.shade600,
-          shape: BoxShape.circle,
+          color: selected ? Colors.blueAccent : Colors.transparent,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: selected ? Colors.white : Colors.grey,
+          ),
         ),
       ),
     );

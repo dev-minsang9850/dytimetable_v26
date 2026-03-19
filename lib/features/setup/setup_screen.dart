@@ -24,7 +24,7 @@ class _SetupScreenState extends State<SetupScreen> {
   // 학년별로 존재하는 반의 개수 정의 (예시)
   // 예: 1학년 1~3반, 2학년 1~9반, 3학년 1~9반
   final Map<int, int> _maxClassPerGrade = {
-    1: 3, // 1학년 1~3반
+    1: 9, // 1학년 1~9반
     2: 10, // 2학년 1~10반 (예시)
     3: 9, // 3학년 1~9반 → 3학년 10반은 없는 반
   };
@@ -44,7 +44,7 @@ class _SetupScreenState extends State<SetupScreen> {
           content: Text(
             message,
             style: const TextStyle(
-              fontSize: 9, // 🔹 여기서 더 줄이기 (예: 9)
+              fontSize: 7, // 🔹 여기서 더 줄이기 (예: 9)
             ),
             textAlign: TextAlign.center,
           ),

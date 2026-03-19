@@ -94,7 +94,7 @@ String shortSubject(String original) {
 
   // 매핑이 없으면 길이에 따라 앞 2~3글자만 사용
   if (text.length <= 3) return text;
-  return text.substring(0, 3);
+  return text.substring(0, 4);
 }
 
 class TodayTimetableScreen extends StatefulWidget {
@@ -135,6 +135,7 @@ class _TodayTimetableScreenState extends State<TodayTimetableScreen> {
   }
 
   Future<void> _fetchWeekTimetable() async {
+    if (!mounted) return;
     setState(() {
       _loading = true;
       _error = null;
@@ -156,6 +157,8 @@ class _TodayTimetableScreenState extends State<TodayTimetableScreen> {
         schoolCode: schoolCode,
         anyDayInWeek: _today,
       );
+
+      if (!mounted) return;
 
       if (allRows.isEmpty) {
         setState(() {
@@ -196,6 +199,8 @@ class _TodayTimetableScreenState extends State<TodayTimetableScreen> {
         _grid[rowIdx][col] = shortSubject(row.subject);
       }
 
+      if (!mounted) return;
+
       setState(() {
         _loading = false;
         final hasAny = _grid.any(
@@ -206,6 +211,7 @@ class _TodayTimetableScreenState extends State<TodayTimetableScreen> {
         }
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _loading = false;
         _error = '시간표를 불러오지 못했습니다.';
@@ -218,21 +224,22 @@ class _TodayTimetableScreenState extends State<TodayTimetableScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final shortest = constraints.biggest.shortestSide;
-        final size = shortest * 0.82;
+        final size = shortest * 0.88; // 조금 더 키운 상태
 
         return Center(
           child: SizedBox(
             width: size,
             height: size,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 8, vertical: 4), // vertical 8 → 4
               child: Column(
                 children: [
                   _Header(
                     monday: _monday,
                     onRefresh: _fetchWeekTimetable,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2), // 4 → 2로 간격 축소
                   Expanded(child: _buildBody()),
                 ],
               ),
@@ -257,7 +264,7 @@ class _TodayTimetableScreenState extends State<TodayTimetableScreen> {
           children: [
             Text(
               _error!,
-              style: const TextStyle(fontSize: 11),
+              style: const TextStyle(fontSize: 9),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 4),
@@ -265,7 +272,7 @@ class _TodayTimetableScreenState extends State<TodayTimetableScreen> {
               onPressed: _fetchWeekTimetable,
               child: const Text(
                 '다시 시도',
-                style: TextStyle(fontSize: 11),
+                style: TextStyle(fontSize: 9),
               ),
             ),
           ],
@@ -301,46 +308,54 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final friday = monday.add(const Duration(days: 4));
+    final dateRangeText =
+        '${monday.month}.${monday.day} ~ ${friday.month}.${friday.day}';
+
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        // 왼쪽: "시간표"와 날짜를 세로로 배치
         Expanded(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
+            mainAxisAlignment: MainAxisAlignment.center, // 세로 중앙 정렬
             children: [
               const Text(
-                '이번 주 시간표',
+                '시간표',
                 style: TextStyle(
-                  fontSize: 9,
+                  fontSize: 11,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 1),
+              // 가로 간격(SizedBox.width) 대신 세로 간격(height) 사용
+              const SizedBox(height: 2),
               Text(
-                '${monday.month}월 ${monday.day}일 ~ ${friday.month}월 ${friday.day}일',
+                dateRangeText,
                 style: const TextStyle(
-                  fontSize: 7,
+                  fontSize: 9,
                   color: Colors.grey,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
         ),
-        // 설정 버튼: 학년/반 다시 설정
+        // 오른쪽: 설정 + 새로고침 아이콘 (간격 최소화)
         IconButton(
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const SetupScreen()),
             );
           },
-          icon: const Icon(Icons.settings, size: 16),
+          icon: const Icon(Icons.settings, size: 14),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
         ),
         const SizedBox(width: 2),
-        // 새로고침 버튼
         IconButton(
           onPressed: onRefresh,
-          icon: const Icon(Icons.refresh, size: 16),
+          icon: const Icon(Icons.refresh, size: 14),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
         ),
@@ -408,7 +423,7 @@ class _PeriodRow extends StatelessWidget {
             width: 32,
             child: Center(
               child: Text(
-                '$period교시',
+                '${period}교시',
                 style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
