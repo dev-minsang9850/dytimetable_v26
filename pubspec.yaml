@@ -1,4 +1,4 @@
-name: dytimetable_flutter
+name: "DYtimetable"
 description: "A new Flutter project."
 publish_to: 'none'
 version: 0.1.0
@@ -11,11 +11,21 @@ dependencies:
     sdk: flutter
   http: ^1.6.0
   shared_preferences: ^2.5.3
+  flutter_native_splash: ^2.4.4
+  
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
 
+
 flutter:
   uses-material-design: true
+
+flutter_icons:
+  android: true
+  ios: false        # Wear만 쓰니까 iOS는 꺼도 됨
+  image_path: "assets/icon/icon.png"
+  

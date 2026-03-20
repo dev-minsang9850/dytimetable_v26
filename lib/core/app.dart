@@ -11,7 +11,7 @@ class TimetableWearApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '학교 시간표',
+      title: '덕영알리미',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
