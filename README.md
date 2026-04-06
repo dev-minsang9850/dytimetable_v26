@@ -1,3 +1,4 @@
-# dytimetable_flutter
+# 덕영시간표_웨어러블
 
-A new Flutter project.
+<p>덕영고등학교 시간표 알리미 웨어러블 버전입니다.</p>
+<p>현재 지원하는 운영체제는 WearOS입니다.<p>
